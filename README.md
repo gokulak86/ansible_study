@@ -4,7 +4,10 @@ Case studied in ansible
 
 Sample output logs of execution,
 
-# [root@localhost ansible_playbooks]# ansible-playbook test.yml --tags=task_role1
+ [root@localhost ansible_playbooks]#
+ 
+    ansible-playbook test.yml --tags=task_role1
+    
 [WARNING]:  * Failed to parse /etc/ansible/hosts with yaml plugin: YAML inventory has invalid
 structure, it should be a dictionary, got: <class 'ansible.parsing.yaml.objects.AnsibleUnicode'>
 [WARNING]:  * Failed to parse /etc/ansible/hosts with ini plugin: /etc/ansible/hosts:44: Expected
@@ -56,7 +59,10 @@ localhost                  : ok=3    changed=1    unreachable=0    failed=0    s
 
 [root@localhost ansible_playbooks]# 
 [root@localhost ansible_playbooks]# 
-# [root@localhost ansible_playbooks]# ansible-playbook test.yml --tags=role1  # role1 will be executed.
+[root@localhost ansible_playbooks]# 
+    
+    ansible-playbook test.yml --tags=role1  # role1 will be executed.
+    
 [WARNING]:  * Failed to parse /etc/ansible/hosts with yaml plugin: YAML inventory has invalid
 structure, it should be a dictionary, got: <class 'ansible.parsing.yaml.objects.AnsibleUnicode'>
 [WARNING]:  * Failed to parse /etc/ansible/hosts with ini plugin: /etc/ansible/hosts:44: Expected
@@ -89,7 +95,9 @@ ok: [localhost] => {
 PLAY RECAP *******************************************************************************************
 localhost                  : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 
-# [root@localhost ansible_playbooks]# ansible-playbook test.yml --tags=role2 # role2 will be executed. But will be skipped since we have written a when clause in the include_role 
+[root@localhost ansible_playbooks]# 
+    
+    ansible-playbook test.yml --tags=role2 # role2 will be executed. But will be skipped since we have written a when clause in the include_role 
 [WARNING]:  * Failed to parse /etc/ansible/hosts with yaml plugin: YAML inventory has invalid
 structure, it should be a dictionary, got: <class 'ansible.parsing.yaml.objects.AnsibleUnicode'>
 [WARNING]:  * Failed to parse /etc/ansible/hosts with ini plugin: /etc/ansible/hosts:44: Expected
@@ -112,7 +120,10 @@ skipping: [localhost] => (item=role2)
 PLAY RECAP *******************************************************************************************
 localhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 
-# [root@localhost ansible_playbooks]# ansible-playbook test.yml --tags=block2. # Here the entire block is executed. So all tasks inside the block will be executed irrespective of the task specific tags
+# Block tags
+    ansible-playbook test.yml --tags=block2.
+Here the entire block is executed. So all tasks inside the block will be executed irrespective of the task specific tags
+
 PLAY [Playbook1] *************************************************************************************
 
 PLAY [Plabook2] **************************************************************************************
@@ -155,7 +166,9 @@ the when command its not accessible in the tags
         when:
          - 'role_name_var not in var2.stdout'
         
-[root@localhost ansible_playbooks]# ansible-playbook test.yml --tags=role1
+[root@localhost ansible_playbooks]# 
+
+    ansible-playbook test.yml --tags=role1
 [WARNING]:  * Failed to parse /etc/ansible/hosts with yaml plugin: YAML inventory has invalid
 structure, it should be a dictionary, got: <class 'ansible.parsing.yaml.objects.AnsibleUnicode'>
 [WARNING]:  * Failed to parse /etc/ansible/hosts with ini plugin: /etc/ansible/hosts:44: Expected
@@ -168,34 +181,48 @@ localhost does not match 'all'
 PLAY [Playbook1] *************************************************************************************
 
 PLAY [Plabook2] **************************************************************************************
-ERROR! 'role_name_var' is undefined
+       
+        ERROR! 'role_name_var' is undefined
 [root@localhost ansible_playbooks]# 
        
        
 
-# Another interesting scenario,
+# Another interesting scenario, tag inside roles.
 
  I have added a tag r1t2 to the second task in role1, file below. Am calling with main test.yml with --tags=r1t2 , and if you check the O/P. That task tagged with r1t2 alone is executed. It gets executed only with, tag: always
+ 
 
-[root@localhost ansible_playbooks]# cat roles/role1/tasks/main.yml 
+      - include_role:
+          name: "{{  role_name_var }}"
+          apply:
+            tags: "{{  role_name_var }}"
+        tags: always
+    
 
----
-tasks file for role1
+[root@localhost ansible_playbooks]# 
+        
+    cat roles/role1/tasks/main.yml 
 
-- name: "Task1 inside role"
-  debug:
-   msg: "Inside task1 role1"
+    ---
+    tasks file for role1
 
-- name: "Role1 task2 accessong role var"
-  debug:
-    msg: " Role var name is {{ name }} "
-  tags: r1t2
+    - name: "Task1 inside role"
+      debug:
+       msg: "Inside task1 role1"
+
+    - name: "Role1 task2 accessong role var"
+      debug:
+        msg: " Role var name is {{ name }} "
+      tags: r1t2
   
   
 [root@localhost ansible_playbooks]# 
 
 
-[root@localhost ansible_playbooks]# ansible-playbook test.yml --tags=r1t2
+[root@localhost ansible_playbooks]#
+      
+    ansible-playbook test.yml --tags=r1t2
+
 [WARNING]:  * Failed to parse /etc/ansible/hosts with yaml plugin: YAML inventory has invalid
 structure, it should be a dictionary, got: <class 'ansible.parsing.yaml.objects.AnsibleUnicode'>
 [WARNING]:  * Failed to parse /etc/ansible/hosts with ini plugin: /etc/ansible/hosts:44: Expected
