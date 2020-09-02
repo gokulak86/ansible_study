@@ -1,0 +1,6 @@
+---
+# tasks file for role2
+
+- name: "Task1 inside role"
+  debug:
+   msg: "Inside task1 role2"

@@ -1,0 +1,11 @@
+---
+# tasks file for role1
+
+- name: "Task1 inside role"
+  debug:
+   msg: "Inside task1 role1"
+
+- name: "Role1 task2 accessong role var"
+  debug:
+    msg: " Role var name is {{ name }} "
+  tags: r1t2

@@ -1,0 +1,39 @@
+
+- name: "Playbook1"
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - block:
+      - debug:
+         msg: "Plabook1"	
+        tags: task1
+      - include_role:
+         name: role1
+         apply:
+          tags: task_role1
+        tags: task_role1
+      tags: block1
+
+- name: "Plabook2"
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - block:
+      - command: echo role2
+        register: var2
+        tags: always
+      - include_role:
+          name: "{{  role_name_var }}"
+          apply:
+            tags: "{{  role_name_var }}"
+        tags: '{{  role_name_var }}'
+        #tags: always
+        when:
+         - 'role_name_var not in var2.stdout'
+        tags: always
+        loop:
+          - role1
+          - role2
+        loop_control:
+          loop_var: role_name_var
+      tags: block2
