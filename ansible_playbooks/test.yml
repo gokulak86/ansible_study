@@ -22,15 +22,18 @@
       - command: echo role2
         register: var2
         tags: always
+      - debug:
+         msg: "inside block2"
+        tags: b2
       - include_role:
           name: "{{  role_name_var }}"
           apply:
             tags: "{{  role_name_var }}"
-        tags: '{{  role_name_var }}'
-        #tags: always
+        #tags: '{{  role_name_var }}'
+        tags: always
         when:
          - 'role_name_var not in var2.stdout'
-        tags: always
+        #tags: always
         loop:
           - role1
           - role2
