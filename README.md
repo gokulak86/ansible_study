@@ -6,7 +6,7 @@ Sample output logs of execution,
 
  [root@localhost ansible_playbooks]#
  
-    ansible-playbook test.yml --tags=task_role1
+    ansible-playbook test.yml --tags=task_role1 # Task tagged with task_role1 is executed
     
 [WARNING]:  * Failed to parse /etc/ansible/hosts with yaml plugin: YAML inventory has invalid
 structure, it should be a dictionary, got: <class 'ansible.parsing.yaml.objects.AnsibleUnicode'>
@@ -37,7 +37,9 @@ TASK [command] *****************************************************************
 changed: [localhost]
 
 TASK [include_role : {{  role_name_var }}] ***********************************************************
-skipping: [localhost] => (item=role2)    # Here it is interesting, it is due to tags: always inside include_role. Due to always include_role block is called. But none of the tasks inside included roles are executed since they dont have the passed tag --tags=task_role1
+skipping: [localhost] => (item=role2)  
+
+The above skipping log is interesting, it is due to tags: always inside include_role (refer code below). Due to tags:always include_role task is called always. But none of the tasks inside included roles are executed since they dont have the passed tag --tags=task_role1. Tasks tagged with tags:always is always executed irrespective of any tags passed while invoking ansible
 
 
      - include_role:
@@ -60,6 +62,8 @@ localhost                  : ok=3    changed=1    unreachable=0    failed=0    s
 [root@localhost ansible_playbooks]# 
 [root@localhost ansible_playbooks]# 
 [root@localhost ansible_playbooks]# 
+
+-----
     
     ansible-playbook test.yml --tags=role1  # role1 will be executed.
     
@@ -97,6 +101,8 @@ localhost                  : ok=3    changed=1    unreachable=0    failed=0    s
 
 [root@localhost ansible_playbooks]# 
     
+-----
+
     ansible-playbook test.yml --tags=role2 # role2 will be executed. But will be skipped since we have written a when clause in the include_role 
 [WARNING]:  * Failed to parse /etc/ansible/hosts with yaml plugin: YAML inventory has invalid
 structure, it should be a dictionary, got: <class 'ansible.parsing.yaml.objects.AnsibleUnicode'>
@@ -119,6 +125,8 @@ skipping: [localhost] => (item=role2)
 
 PLAY RECAP *******************************************************************************************
 localhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+-----
 
 # Block tags
     ansible-playbook test.yml --tags=block2.
@@ -151,6 +159,8 @@ ok: [localhost] => {
 
 PLAY RECAP *******************************************************************************************
 localhost                  : ok=4    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+-----
 
 # Note:
 
