@@ -141,9 +141,9 @@ ok: [localhost] => {
 PLAY RECAP *******************************************************************************************
 localhost                  : ok=4    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 
+# Note:
 
-
-When I tried to execute by commenting out tags:always in the include_role task. It says role_name_var is not defined!!  Though variable name is accessible inside 
+When I tried to execute by commenting out tags:always in the include_role task and uncommenting tags: '{{  role_name_var }}' like below. It says role_name_var is not defined!!  Though variable name is accessible inside 
 the when command its not accessible in the tags
 
       - include_role:
