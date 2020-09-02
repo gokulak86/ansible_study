@@ -35,6 +35,8 @@ changed: [localhost]
 
 TASK [include_role : {{  role_name_var }}] ***********************************************************
 skipping: [localhost] => (item=role2)    # Here it is interesting, it is due to tags: always inside include_role. Due to always include_role block is called. But none of the tasks inside included roles are executed since they dont have the passed tag --tags=task_role1
+
+
      - include_role:
           name: "{{  role_name_var }}"
           apply:
@@ -110,7 +112,7 @@ skipping: [localhost] => (item=role2)
 PLAY RECAP *******************************************************************************************
 localhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 
-[root@localhost ansible_playbooks]# ansible-playbook test.yml --tags=block2. # Here the entire block is executed. So all tasks inside the block will be executed irrespective of the task specific tag
+[root@localhost ansible_playbooks]# ansible-playbook test.yml --tags=block2. # Here the entire block is executed. So all tasks inside the block will be executed irrespective of the task specific tags
 PLAY [Playbook1] *************************************************************************************
 
 PLAY [Plabook2] **************************************************************************************
@@ -142,7 +144,7 @@ localhost                  : ok=4    changed=1    unreachable=0    failed=0    s
 
 
 When I tried to execute by commenting out tags:always in the include_role task. It says role_name_var is not defined!!  Though variable name is accessible inside 
-the when commnad its not accessible in the tags
+the when command its not accessible in the tags
 
       - include_role:
           name: "{{  role_name_var }}"
